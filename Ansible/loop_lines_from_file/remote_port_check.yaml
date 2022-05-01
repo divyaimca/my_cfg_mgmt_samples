@@ -1,0 +1,11 @@
+ hosts: localhost
+  tasks:
+    - block:
+        - wait_for:
+            host: "{{ item.split(':').0 }}"
+            port: "{{ item.split(':').1|int }}"
+            timeout: 5
+          loop: "{{ lookup('file', 'remote-hosts.txt').splitlines() }}"
+      rescue:
+        - debug:
+            msg: "{{ ansible_failed_result.results|selectattr('failed') }}"
